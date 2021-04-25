@@ -1,6 +1,11 @@
 <?php
 
   require_once 'lib/PHPExcel/IOFactory.php';
+  $path = "documents";
+  if (!file_exists($path)) {
+      mkdir($path, 0777, true);
+  }
+
   $archivo = "documentIdsList.xlsx";
   $objPHPExcel = PHPExcel_IOFactory::load($archivo);
   $objPHPExcel->setActiveSheetIndex(0);
@@ -21,7 +26,7 @@
       $result = file_put_contents($documents, $file);
     }
   }
-  echo "Descarga finalizada";
+  echo "<p> Descarga finalizada </p>";
 
   function url_exists($url) {
 
