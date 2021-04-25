@@ -87,41 +87,47 @@ require_once 'lib/PHPExcel/IOFactory.php';
     $documentIds->setActiveSheetIndex(0);
     $ids = $documentIds->setActiveSheetIndex(0)->getHighestRow();
 
-    for ($i = 2; $i <= $ids; $i++){
+    $error="";
+    for ($i = 2; $i <= 4; $i++){
 
       $dato = $documentIds->getActiveSheet()->getCell('A'.$i)->getCalculatedValue();
       $documents = 'documents/'.$dato.'.xlsx';
 
-      $listExcel = PHPExcel_IOFactory::load("listOfField.xlsx");
-      $listExcel->setActiveSheetIndex(0);
-      $numRows = $listExcel->setActiveSheetIndex(0)->getHighestRow();
+      if (file_exists($documents)) {
+        $listExcel = PHPExcel_IOFactory::load("listOfField.xlsx");
+        $listExcel->setActiveSheetIndex(0);
+        $numRows = $listExcel->setActiveSheetIndex(0)->getHighestRow();
 
-      $cont=1;
-      $comp=0;
+        $cont=1;
+        $comp=0;
 
-      $objPHPExcel->getActiveSheet()->setCellValue('A'.$i, $dato);
-      for ($j = 3; $j <= $numRows; $j++){
+        $objPHPExcel->getActiveSheet()->setCellValue('A'.$i, $dato);
+        for ($j = 3; $j <= $numRows; $j++){
 
-          $celda = $listExcel->getActiveSheet()->getCell('D'.$j)->getCalculatedValue();
+            $celda = $listExcel->getActiveSheet()->getCell('D'.$j)->getCalculatedValue();
 
-          $cell = PHPExcel_IOFactory::load($documents);
-          $cell->setActiveSheetIndex(0);
-          $celdaDato = $cell->getActiveSheet()->getCell($celda)->getCalculatedValue();
+            $cell = PHPExcel_IOFactory::load($documents);
+            $cell->setActiveSheetIndex(0);
+            $celdaDato = $cell->getActiveSheet()->getCell($celda)->getCalculatedValue();
 
-        if($cont>25){ $cont=0; $comp++; }
-          $objPHPExcel->getActiveSheet()->setCellValue(
-          $complemento[$comp].$fila[$cont].$i,
-          $celdaDato
-        );
-        $cont++;
+          if($cont>25){ $cont=0; $comp++; }
+            $objPHPExcel->getActiveSheet()->setCellValue(
+            $complemento[$comp].$fila[$cont].$i,
+            $celdaDato
+          );
+          $cont++;
+        }
+
+        $objWriter = PHPExcel_IOFactory::createWriter($objPHPExcel, 'Excel2007');
+        $objWriter->save('listOfField.xlsx');
+      }else{
+        $error.=" <p> ha ocurrido un error en el documento $dato </p> ";
       }
 
-      $objWriter = PHPExcel_IOFactory::createWriter($objPHPExcel, 'Excel2007');
-      $objWriter->save('listOfField.xlsx');
     }
 
   $objWriter = PHPExcel_IOFactory::createWriter($objPHPExcel, 'Excel2007');
   $objWriter->save('listOfField.xlsx');
 
-  echo "<p> Descarga de campos finalizada <p>";
+  echo "<p> Descarga de campos finalizada <p> ".$error;
 ?>
