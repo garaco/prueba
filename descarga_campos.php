@@ -88,7 +88,7 @@ require_once 'lib/PHPExcel/IOFactory.php';
     $ids = $documentIds->setActiveSheetIndex(0)->getHighestRow();
 
     $error="";
-    for ($i = 2; $i <= 4; $i++){
+    for ($i = 2; $i <= $ids; $i++){
 
       $dato = $documentIds->getActiveSheet()->getCell('A'.$i)->getCalculatedValue();
       $documents = 'documents/'.$dato.'.xlsx';
